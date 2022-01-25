@@ -105,11 +105,11 @@ void test_parse_url() {
 	char * gophermap = "/gophermap";
 
 
-	assert(strcmp(_parse_url("/"), "/") == 0);
+	assert(strcmp(_parse_url("/"), "/var/gopher/") == 0);
 
-	assert(strcmp(_parse_url("/demo"), "/demo") == 0);
+	assert(strcmp(_parse_url("/demo"), "/var/gopher/demo") == 0);
 
-	assert(strcmp(_parse_url("/gophermap"), "/gophermap") == 0);
+	assert(strcmp(_parse_url("/gophermap"), "/var/gopher/gophermap") == 0);
 
 	TEST_PASS
 }

@@ -206,7 +206,7 @@ void _server_status(Server * server) {
 void _process_request(int client_socket, char * buf) {
 
 	char * url;
-	char *fullpath = calloc(REQUEST_URL_SIZE+1, sizeof(char));
+	//char *fullpath = calloc(REQUEST_URL_SIZE+1, sizeof(char));
 	char * documentname;	// full path of document OR 'fullpath'/gophermap if DIR
 
 	syslog(LOG_DEBUG, "_process_request() received %s", buf);
@@ -215,27 +215,25 @@ void _process_request(int client_socket, char * buf) {
 
 	syslog(LOG_DEBUG, "Parsed URL = %s", url);
 
-	sprintf(fullpath, "%s%s", GOPHER_ROOT, url);
-
 	struct stat sb;
 
-	if (stat( fullpath, &sb) == STATFAIL) {
-		_invalid_url(fullpath);
+	if (stat( url, &sb) == STATFAIL) {
+		_invalid_url(url);
 		return;
 	}
 
 	if (S_ISDIR(sb.st_mode)) {
 		// requested directory
 
-		syslog(LOG_DEBUG, "Requested %s is a directory, appending /gophermap", fullpath);
-		printf("Requested %s is a directory\n", fullpath);
+		syslog(LOG_DEBUG, "Requested %s is a directory, appending /gophermap", url);
+		printf("Requested %s is a directory\n", url);
 
-		documentname = strcat(fullpath, "gophermap");
+		documentname = strcat(url, "gophermap");
 	} else {
-		documentname = fullpath;
+		documentname = url;
 	}
 
-	syslog(LOG_DEBUG, "Fullpath of requested URL = %s", fullpath);
+	syslog(LOG_DEBUG, "Fullpath of requested URL = %s", url);
 
 	_send_document(client_socket, documentname);
 }
@@ -328,20 +326,14 @@ char * _strip_rn(char * url) {
 
 char * _parse_url(char * url) {
 
-	char * path = calloc(REQUEST_URL_SIZE +1, sizeof(char));
+	char * fullpath = calloc(REQUEST_URL_SIZE +1, sizeof(char));
 	const char defaultpath[] = "gophermap";
-
-	//url[strlen(url)-2] = 0; remove \r\n from url
 
 	url = _strip_rn(url);
 
-	//if (strlen(url) == 0 | url[0] == '/') {
-	//	sprintf(url, "/gophermap");
-	//}
+	sprintf(fullpath, "%s%s", GOPHER_ROOT, url);
 
-	// TODO why do i have this twice in my code??
-
-	return url;
+	return fullpath;
 
 
 

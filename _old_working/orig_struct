@@ -1,0 +1,18 @@
+typedef struct {
+	char		hostname[_POSIX_HOST_NAME_MAX];
+	char		port[6];	/* port listening on */
+	char		listening[16];	/* IP address */
+	int		fd;	/* socket file descriptor */
+	int		client_sock;	/* socket file descriptor */
+	char		root[_POSIX_PATH_MAX];	/* document root */
+
+	int		session_timeout;
+	int		session_max_kbytes;
+	int		session_max_hits;
+	int		session_id;
+
+	char		page_header[81];
+	char		page_footer[81];
+} Server;
+
+//typedef struct serverdata 	Server;

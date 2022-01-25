@@ -1,0 +1,31 @@
+BINARY	protocol.h	/^#define	BINARY		9$/
+BINHEX	protocol.h	/^#define	BINHEX		4$/
+CACHE	gopherd.h	/^#define CACHE		.cache$/
+CRLF	protocol.h	/^#define	CRLF		"\\r\\n"$/
+CSOPHONE	protocol.h	/^#define	CSOPHONE	2$/
+Copyright	LICENSE	/^Copyright (c) 2021, Ian Stanley$/
+DIRECTORY	protocol.h	/^#define	DIRECTORY	1$/
+DOS	protocol.h	/^#define	DOS		5$/
+ERROR	protocol.h	/^#define	ERROR		3$/
+ERROR_BAD_REQUEST	protocol.h	/^#define	ERROR_BAD_REQUEST	3$/
+ERROR_TEXT	protocol.h	/^#define	ERROR_TEXT	"3\\tERROR file or server not f/
+FAILURE	gopherd.h	/^#define FAILURE 1$/
+FILE	protocol.h	/^#define	FILE		0$/
+GIF	protocol.h	/^#define	GIF		g$/
+GOPHER_PORT	protocol.h	/^#define	GOPHER_PORT	70$/
+GOPHER_ROOT	gopherd.h	/^#define GOPHER_ROOT	\/var\/gopher$/
+IMAGE	protocol.h	/^#define	IMAGE		I$/
+INDEX	gopherd.h	/^#define INDEX		gophermap$/
+Locators	rfc1738.txt	/^                    Uniform Resource Locators (URL/
+Mmain	main.c	/^main()$/
+Mmain.c.BAK	main.c.BAK	/^int main() {$/
+REDUNDANTSERVER	protocol.h	/^#define	REDUNDANTSERVER	+$/
+SEARCH	protocol.h	/^#define	SEARCH		7$/
+SECURE_PORT	protocol.h	/^#define SECURE_PORT	465$/
+SUCCESS	gopherd.h	/^#define	SUCCESS	0$/
+TELNET	protocol.h	/^#define	TELNET		8$/
+TN3270	protocol.h	/^#define	TN3270		T$/
+Transaction	rfc1436.txt	/^Menu Transaction  (Type 1 item)$/
+UNIX	protocol.h	/^#define	UNIX		6$/
+UUENCODE	protocol.h	/^#define	UUENCODE	6$/
+selector	rfc1436.txt	/^   systems, connecting to a server and sending the/

@@ -143,9 +143,8 @@ int start_server(Server * server) {
 
 	struct sockaddr address;
 	socklen_t addrlen;
-	// int BUFSIZE = 1024;
-	char *buffer = malloc(BUFSIZE);
 
+	char *buffer = malloc(BUFSIZE);
 
 	while (1) {
 
@@ -167,14 +166,11 @@ int start_server(Server * server) {
 		_process_request(client_socket, buffer);
 
 		close(client_socket);
-
 	}
 }
 
 int stop_server(Server * server) {
-	
 	return 0;
-
 }
 
 
@@ -183,16 +179,13 @@ int stop_server(Server * server) {
 		/********************************/
 
 void _server_status(Server * server) {
-
+	// should do something here??
 }
 
 #define		STATFAIL 	-1
 
 void _process_request(int client_socket, char * buf) {
-
 	char * url = calloc(REQUEST_URL_SIZE+1, sizeof(char));
-	//char *fullpath = calloc(REQUEST_URL_SIZE+1, sizeof(char));
-	char * documentname;	// full path of document OR 'fullpath'/gophermap if DIR
 
 	syslog(LOG_DEBUG, "_process_request() received %s", buf);
 
@@ -201,74 +194,19 @@ void _process_request(int client_socket, char * buf) {
 	syslog(LOG_DEBUG, "Parsed URL = %s", url);
 
 	struct stat sb;
-
 	if (stat( url, &sb) == STATFAIL) {
 		_invalid_url(url);
 		return;
 	}
 
-	if (S_ISDIR(sb.st_mode)) {
-		// requested directory
-
-		syslog(LOG_DEBUG, "Requested %s is a directory, appending /gophermap", url);
-		printf("Requested %s is a directory\n", url);
-
-		documentname = strcat(url, "gophermap");
-	} else {
-		documentname = url;
-	}
-
 	syslog(LOG_DEBUG, "Fullpath of requested URL = %s", url);
 
-	_send_document(client_socket, documentname);
+	_send_document(client_socket, url);
 }
-
-/*
-//char * _full_url(char * url) {
-void _full_url(char * fullpath, char * url) {
-
-	//char fullpath[REQUEST_URL_SIZE+1];
-
-	sprintf(fullpath, "%s%s", GOPHER_ROOT, url);
-
-	//return fullpath;
-}
-*/
 
 char * _propend_gophermap(char * url) {
-
 	sprintf(url, "%sgophermap", url);
 	return url;
-}
-
-char * _validate_document(char * doc) {
-
-	char * validated_doc;
-	char * fullpath = NULL;
-
-
-	struct stat sb;
-
-	if (stat( fullpath, &sb) == STATFAIL) {
-		_invalid_url(fullpath);
-		return "";
-	}
-
-	if (S_ISDIR(sb.st_mode)) {
-		// requested directory
-
-		syslog(LOG_DEBUG, "Requested %s is a directory, appending /gophermap", fullpath);
-		printf("Requested %s is a directory\n", fullpath);
-
-		validated_doc = strcat(fullpath, "gophermap");
-	} else {
-		validated_doc = fullpath;
-	}
-
-
-
-
-	return validated_doc;
 }
 
 void _send_document(int client_socket, char * doc) {
@@ -276,14 +214,12 @@ void _send_document(int client_socket, char * doc) {
 	syslog(LOG_DEBUG, "Sending %s to client", doc);
 
 	int fd = open(doc, O_RDONLY, S_IRUSR | S_IWUSR);
-
 	if (fd == -1) {
 		_file_open_error(doc);
 		return;
 	}
 
 	struct stat sb;
-
 	fstat(fd, &sb);
 
 	char * filestr = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
@@ -295,7 +231,6 @@ void _send_document(int client_socket, char * doc) {
 			// TODO fix for other types??
 
 			write(client_socket, "\r", 1);
-			// TODO what to do with client sockets??
 		} 
 
 		write(client_socket, &filestr[i], 1);
@@ -309,7 +244,6 @@ void _send_document(int client_socket, char * doc) {
 }
 
 char * _strip_rn(char * url) {
-
 	int len = strlen(url) -1;	// should point to '\n'
 
 	if (url[len] == '\n') { url[len--] = 0; }	// remove '\n'
@@ -318,23 +252,14 @@ char * _strip_rn(char * url) {
 	return url;
 }
 
-char _last_char_of_url(char * url) {
+char _last_char(char * url) {
 	return url[strlen(url)-1];
 }
 
 void  _parse_url(char * parsed_url, char * url) {
-
 	sprintf(parsed_url, "%s%s", GOPHER_ROOT, _strip_rn(url));
-	//sprintf(url, "%s%s", GOPHER_ROOT, _strip_rn(url));
 
-	//if (_last_char_of_url(url) == '/') {
-	if (_last_char_of_url(parsed_url) == '/') {
-		//_propend_gophermap(url);
-		_propend_gophermap(parsed_url);
-	}
-	
-	//return url;
-	//return parsed_url;
+	if (_last_char(parsed_url) == '/') { _propend_gophermap(parsed_url); }
 }
 
 void _usage() {
@@ -353,17 +278,20 @@ void _set_docroot(Server * s, char *root ) {
 	bzero(s->docroot, sizeof(s->docroot));
 	strcpy(s->docroot, root);
 }
+
 void _set_listening(Server * s, char *ip) {
 	assert(strcmp(ip,"") != 0);
 
 	bzero(s->listening, sizeof(s->listening));
 	strcpy(s->listening, ip);
 }
+
 void _set_port(Server * s, char * p) {
 	assert(p != 0);
 
 	strcpy(s->port, p);
 }
+
 void _set_hostname(Server * s, char *newhost ) {
 	assert(strcmp(newhost,"") != 0);
 

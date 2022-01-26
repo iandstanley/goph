@@ -23,5 +23,5 @@ char * _strip_rn(char * buf);
 char * _validate(char * buf);
 void _process_request(int client_socket, char * buf);
 void _send_document(int client_socket, char * doc);
-char _last_char_of_url(char * url);
+char _last_char(char * url);
 char * _propend_gophermap(char * url);

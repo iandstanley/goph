@@ -125,29 +125,18 @@ void test_parse_url() {
 	TEST_PASS
 }
 
-/*
-void test_full_url() {
-	char * url = "/gophermap";
-	char * str = malloc(20 * sizeof(char));
-	sprintf(str,"/var/gopher%s", "/gophermap");
-
-	assert(strcmp(_full_url(url), str) == 0);
-	TEST_PASS
-}
-*/
-
-void test_last_char_of_url() {
+void test_last_char() {
 	char url1[] ="/var/gopher/";
 	char url2[] ="/var/gopher/gophermap";
 	char url3[] ="/var/gopher/gophermap.sample";
 
-	assert(_last_char_of_url(url1) == '/');
+	assert(_last_char(url1) == '/');
 	TEST_PASS
 
-	assert(_last_char_of_url(url2) == 'p');
+	assert(_last_char(url2) == 'p');
 	TEST_PASS
 
-	assert(_last_char_of_url(url3) == 'e');
+	assert(_last_char(url3) == 'e');
 	TEST_PASS
 }
 
@@ -175,8 +164,7 @@ main()
 	test_syslog();
 	test_strip_rn();
 	test_parse_url();
-	// test_full_url();
-	test_last_char_of_url();
+	test_last_char();
 	test_propend_gophermap();
 
 	printf("\nALL TESTS PASS\n");

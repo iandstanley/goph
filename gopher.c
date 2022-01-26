@@ -27,12 +27,14 @@
 #include	"private.h"	
 #include	"error.h"	// all errors and logging functions
 
-
+#define		CONFIG_FILE		"/etc/gopherd.conf"
 #define		DEFAULT_PORT		"70"
 #define		CONNECTION_QUEUE	10000
 #define		BUFSIZE			4096
 
+#define		MAX_LINE	80
 
+Server server;
 
 /* 
 
@@ -72,6 +74,9 @@ Server * create_server() {
 
 
 void configure_server(Server *server, int argc, char ** argv) {
+
+	_load_config(CONFIG_FILE);
+/*
 	int sw;
 
 	while ((sw = getopt(argc, argv, "p:n:l:r:h") ) != -1) {
@@ -96,6 +101,7 @@ void configure_server(Server *server, int argc, char ** argv) {
 			exit(EXIT_FAILURE);
 		}
 	}
+*/
 }
 
 
@@ -298,4 +304,64 @@ void _set_hostname(Server * s, char *newhost ) {
 	bzero(s->hostname, sizeof(s->hostname));
 	strcpy(s->hostname, newhost);
 }
+
+
+
+
+
+
+
+
+void _load_config(char * configfile) {
+	char line[MAX_LINE+1];
+	char *sep="=\n";
+	char *token, *value;
+
+	FILE * fd = fopen(CONFIG_FILE, "r");
+
+	while ( fgets(line, 80, fd) != NULL ) {
+
+		if (line[0] == '#') {
+			continue;
+		}
+
+		token = strtok(line, sep);
+		value = strtok(NULL, sep);
+
+		if (strcmp(token, "listening") == 0) {
+			strcpy(server.listening, value);
+			continue;
+		}
+
+		if (strcmp(token, "port") == 0) {
+			strcpy(server.port, value);
+			continue;
+		}
+
+		if (strcmp(token, "root") == 0) {
+			strcpy(server.docroot, value);
+			continue;
+		}
+
+	}
+
+	fclose(fd);
+}
+
+void _create_config() {
+
+	FILE * fd = fopen(CONFIG_FILE, "w");
+
+	fprintf(fd, "# /etc/gopherd.conf\n");
+	fprintf(fd, "# This is the configuration file for the gopherd server.\n");
+	fprintf(fd, "# \n");
+	fprintf(fd, "# listening=0.0.0.0\n");
+	fprintf(fd, "# port=70\n");
+	fprintf(fd, "# root=/var/gopherd/\n");
+
+	fclose(fd);
+}
+
+
+
 

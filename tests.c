@@ -16,6 +16,10 @@
 #define 	RUNNING(X)	printf("Running %s\n", X);
 #define		TEST_PASS	printf("¬");
 
+
+extern Server server;
+
+
 void test_create_server() {
 	Server *s = create_server();
 
@@ -48,6 +52,7 @@ void test_set_server_settings() {
 	free(s);
 }
 
+/*
 void test_configure_server() {
 	Server *s = create_server();
 	assert(s != NULL);
@@ -66,9 +71,9 @@ void test_configure_server() {
 	TEST_PASS 
 	assert(strcmp(s->port, "7070") == 0);
 	TEST_PASS 
-
 	free(s);
 }
+*/
 
 void test_closesyslog() {
 	_close_syslog();
@@ -148,24 +153,33 @@ void test_propend_gophermap() {
 	TEST_PASS
 }
 
+
+void test_load_config() {
+
+	_load_config(CONFIG_FILE);
+
+	assert(strncmp(server.listening, "127.0.0.1", strlen("127.0.0.1")) == 0);
+	assert(strncmp(server.port, "7070", strlen("7070")) == 0);
+	assert(strncmp(server.docroot, "/var/gopher", strlen("/var/gopher")) == 0);
+
+	TEST_PASS
+
+}
+
 /******************************************************/
 
 int
 main()
 {
-
-	/******************************************************/
-	/* ALL functions defined above should be called below */
-	/******************************************************/
-
 	test_create_server();
 	test_set_server_settings();
-	test_configure_server();
+/* 	test_configure_server(); */
 	test_syslog();
 	test_strip_rn();
 	test_parse_url();
 	test_last_char();
 	test_propend_gophermap();
+	test_load_config();
 
 	printf("\nALL TESTS PASS\n");
 }

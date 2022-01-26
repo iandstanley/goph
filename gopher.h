@@ -32,11 +32,14 @@ typedef struct {
 
 #define		GOPHER_ROOT		"/var/gopher"
 #define		REQUEST_URL_SIZE	80
+#define		CONFIG_FILE		"/home/ian/goph/gopherd.conf"
+
 
 /*
  *	PUBLIC function prototypes
  *
  */
+
 Server * create_server();
 void configure_server(Server *server, int argc, char ** argv);
 int start_server(Server * server);

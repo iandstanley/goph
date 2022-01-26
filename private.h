@@ -15,10 +15,10 @@ void _usage();
 
 void _create_config();
 void _load_config(char * configfile);
-void _set_docroot(Server * s, char *root );
-void _set_listening(Server * s, char *ip);
-void _set_port(Server * s, char * p);
-void _set_hostname(Server * s, char *newhost);
+void _set_docroot(char * root);
+void _set_listening(char *ip);
+void _set_port(char * p);
+void _set_hostname(char * newhost);
 void _parse_url(char * url, char * buf);
 char * _full_url(char * buf);
 char * _strip_rn(char * buf);

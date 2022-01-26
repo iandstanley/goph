@@ -27,7 +27,6 @@
 #include	"private.h"	
 #include	"error.h"	// all errors and logging functions
 
-#define		CONFIG_FILE		"/etc/gopherd.conf"
 #define		DEFAULT_PORT		"70"
 #define		CONNECTION_QUEUE	10000
 #define		BUFSIZE			4096
@@ -52,8 +51,11 @@ Server server;
 		/********************************/
 
 
+/*
 Server * create_server() {
+
 	_open_syslog();
+
 
 	Server *s = calloc(1,sizeof(Server));
 	assert(s != NULL);
@@ -68,15 +70,15 @@ Server * create_server() {
 	s->socket = -2;		// initialize to impossible RC code
 	strcpy(s->docroot, "/var/gopher");
 	return s;
-
 }
+*/
 
 
 
+/*
 void configure_server(Server *server, int argc, char ** argv) {
 
 	_load_config(CONFIG_FILE);
-/*
 	int sw;
 
 	while ((sw = getopt(argc, argv, "p:n:l:r:h") ) != -1) {
@@ -101,11 +103,15 @@ void configure_server(Server *server, int argc, char ** argv) {
 			exit(EXIT_FAILURE);
 		}
 	}
-*/
 }
+*/
 
 
-int start_server(Server * server) {
+//int start_server(Server * server) {
+
+int start_server() {
+
+	_load_config(CONFIG_FILE);
 
 	struct addrinfo hints, *res, *p;
 	memset( &hints, 0, sizeof(hints) );
@@ -113,9 +119,9 @@ int start_server(Server * server) {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	syslog(LOG_DEBUG, "GOPHERD: Starting gopherd on ip %s on port %s", server->listening, server->port);
+	syslog(LOG_DEBUG, "GOPHERD: Starting gopherd on ip %s on port %s", server.listening, server.port);
 
-	if ( getaddrinfo( NULL, server->port, &hints, &res) != 0) {
+	if ( getaddrinfo( NULL, server.port, &hints, &res) != 0) {
 		_getaddrinfo_failed();
 	}
 
@@ -123,12 +129,12 @@ int start_server(Server * server) {
 
 	// socket and bind
 	for ( p = res; p != NULL; p = p->ai_next ) {
-		server->socket = socket( p->ai_family, p->ai_socktype, 0 );
+		server.socket = socket( p->ai_family, p->ai_socktype, 0 );
 
-		if ( server->socket == -1 ) 
+		if ( server.socket == -1 ) 
 			continue;
 
-		if ( bind( server->socket, p->ai_addr, p->ai_addrlen) == 0 ) 
+		if ( bind( server.socket, p->ai_addr, p->ai_addrlen) == 0 ) 
 			break;
 	}
 
@@ -139,7 +145,7 @@ int start_server(Server * server) {
 	freeaddrinfo(res);
 
 	// listen for incoming connections
-	if ( listen( server->socket, CONNECTION_QUEUE ) != 0 ) {
+	if ( listen( server.socket, CONNECTION_QUEUE ) != 0 ) {
 		_listen_failed();
 	}
 
@@ -154,7 +160,7 @@ int start_server(Server * server) {
 
 	while (1) {
 
-		if ((client_socket = accept(server->socket, 
+		if ((client_socket = accept(server.socket, 
 			(struct sockaddr *) &address, &addrlen)) <= 0) {
 			_accept_failed();
 		}
@@ -175,16 +181,17 @@ int start_server(Server * server) {
 	}
 }
 
+/*
 int stop_server(Server * server) {
 	return 0;
 }
-
+*/ 
 
 		/********************************/
 		/* PRIVATE FUNCTIONS IN LIBRARY */
 		/********************************/
 
-void _server_status(Server * server) {
+void _server_status() {
 	// should do something here??
 }
 
@@ -278,31 +285,31 @@ void _usage() {
 	fprintf(stderr, "\n");
 }
 
-void _set_docroot(Server * s, char *root ) {
+void _set_docroot(char *root ) {
 	assert(strcmp(root,"") != 0);
 
-	bzero(s->docroot, sizeof(s->docroot));
-	strcpy(s->docroot, root);
+	bzero(server.docroot, sizeof(server.docroot));
+	strcpy(server.docroot, root);
 }
 
-void _set_listening(Server * s, char *ip) {
+void _set_listening(char *ip) {
 	assert(strcmp(ip,"") != 0);
 
-	bzero(s->listening, sizeof(s->listening));
-	strcpy(s->listening, ip);
+	bzero(server.listening, sizeof(server.listening));
+	strcpy(server.listening, ip);
 }
 
-void _set_port(Server * s, char * p) {
+void _set_port(char * p) {
 	assert(p != 0);
 
-	strcpy(s->port, p);
+	strcpy(server.port, p);
 }
 
-void _set_hostname(Server * s, char *newhost ) {
+void _set_hostname(char *newhost ) {
 	assert(strcmp(newhost,"") != 0);
 
-	bzero(s->hostname, sizeof(s->hostname));
-	strcpy(s->hostname, newhost);
+	bzero(server.hostname, sizeof(server.hostname));
+	strcpy(server.hostname, newhost);
 }
 
 

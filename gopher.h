@@ -40,7 +40,7 @@ typedef struct {
  *
  */
 
-Server * create_server();
-void configure_server(Server *server, int argc, char ** argv);
-int start_server(Server * server);
-int stop_server(Server * server);
+// Server * create_server();
+// void configure_server(Server *server, int argc, char ** argv);
+int start_server();
+// int stop_server(Server * server);

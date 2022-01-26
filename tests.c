@@ -20,6 +20,7 @@
 extern Server server;
 
 
+/*
 void test_create_server() {
 	Server *s = create_server();
 
@@ -28,28 +29,27 @@ void test_create_server() {
 	free(s);
 	TEST_PASS 
 }
-
+*/
 
 void test_set_server_settings() {
-	Server * s = create_server();
+/* 	Server * s = create_server(); */
 
-	_set_hostname(s, "myhost");
-	assert(strcmp(s->hostname, "myhost") == 0);
+	_set_hostname("myhost");
+	assert(strcmp(server.hostname, "myhost") == 0);
 	TEST_PASS 
 
-	_set_listening(s, "127.0.0.1");
-	assert(strcmp(s->listening, "127.0.0.1") == 0);
+	_set_listening("127.0.0.1");
+	assert(strcmp(server.listening, "127.0.0.1") == 0);
 	TEST_PASS 
 
-	_set_port(s, "7070");
-	assert(strcmp(s->port, "7070") == 0);
+	_set_port("7070");
+	assert(strcmp(server.port, "7070") == 0);
 	TEST_PASS 
 
-	_set_docroot(s, "/tmp");
-	assert(strcmp(s->docroot, "/tmp") == 0);
+	_set_docroot("/tmp");
+	assert(strcmp(server.docroot, "/tmp") == 0);
 	TEST_PASS 
 
-	free(s);
 }
 
 /*
@@ -61,7 +61,8 @@ void test_configure_server() {
 	char *p[9];
 	for (int i = 0; i < 9; i++) { p[i] = args[i]; }
 
-	configure_server(s, 9, p);
+ 	configure_server(s, 9, p); 
+	_load_config
 
 	assert(strncmp(s->hostname, "myhost", sizeof("myhost")) == 0);
 	TEST_PASS 
@@ -171,7 +172,7 @@ void test_load_config() {
 int
 main()
 {
-	test_create_server();
+/* 	test_create_server(); */
 	test_set_server_settings();
 /* 	test_configure_server(); */
 	test_syslog();

@@ -30,7 +30,8 @@ typedef struct {
 	int	client_socket; 		// TODO do I need this in the struct??
 } Server;
 
-#define		GOPHER_ROOT	"/var/gopher"
+#define		GOPHER_ROOT		"/var/gopher"
+#define		REQUEST_URL_SIZE	80
 
 /*
  *	PUBLIC function prototypes

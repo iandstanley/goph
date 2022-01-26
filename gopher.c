@@ -28,11 +28,9 @@
 #include	"error.h"	// all errors and logging functions
 
 
-#define		DEFAULT_PORT	"70"
+#define		DEFAULT_PORT		"70"
 #define		CONNECTION_QUEUE	10000
-#define		REQUEST_URL_SIZE	80
 #define		BUFSIZE			4096
-#define		GOPHER_ROOT		"/var/gopher"
 
 
 
@@ -186,32 +184,19 @@ int stop_server(Server * server) {
 
 void _server_status(Server * server) {
 
-	printf("hostname is %s\n", server->hostname);
-	printf("listening on %s on port %s\n", server->listening, server->port);
-	printf("documents stored at %s\n", server->docroot);
-
-	/*
-		printf("session timeout =  %d\n", server->session_timeout);
-		printf("max bytes = %d\n", server->session_max_kbytes);
-		printf("max hits = %d\n", server->session_max_hits);
-		printf("session id = %d\n", server->session_id);
-		printf("page_header is %s\n", server->page_header);
-		printf("page_footer is %s\n", server->page_footer);
-	*/
-
 }
 
 #define		STATFAIL 	-1
 
 void _process_request(int client_socket, char * buf) {
 
-	char * url;
+	char * url = calloc(REQUEST_URL_SIZE+1, sizeof(char));
 	//char *fullpath = calloc(REQUEST_URL_SIZE+1, sizeof(char));
 	char * documentname;	// full path of document OR 'fullpath'/gophermap if DIR
 
 	syslog(LOG_DEBUG, "_process_request() received %s", buf);
 
-	url = _parse_url(buf);
+	_parse_url(url, buf);
 
 	syslog(LOG_DEBUG, "Parsed URL = %s", url);
 
@@ -238,19 +223,28 @@ void _process_request(int client_socket, char * buf) {
 	_send_document(client_socket, documentname);
 }
 
-char * _full_url(char * url) {
+/*
+//char * _full_url(char * url) {
+void _full_url(char * fullpath, char * url) {
 
-	char fullpath[REQUEST_URL_SIZE+1];
+	//char fullpath[REQUEST_URL_SIZE+1];
 
 	sprintf(fullpath, "%s%s", GOPHER_ROOT, url);
 
-	return fullpath;
+	//return fullpath;
+}
+*/
+
+char * _propend_gophermap(char * url) {
+
+	sprintf(url, "%sgophermap", url);
+	return url;
 }
 
 char * _validate_document(char * doc) {
 
 	char * validated_doc;
-	char * fullpath;
+	char * fullpath = NULL;
 
 
 	struct stat sb;
@@ -324,20 +318,23 @@ char * _strip_rn(char * url) {
 	return url;
 }
 
-char * _parse_url(char * url) {
+char _last_char_of_url(char * url) {
+	return url[strlen(url)-1];
+}
 
-	char * fullpath = calloc(REQUEST_URL_SIZE +1, sizeof(char));
-	const char defaultpath[] = "gophermap";
+void  _parse_url(char * parsed_url, char * url) {
 
-	url = _strip_rn(url);
+	sprintf(parsed_url, "%s%s", GOPHER_ROOT, _strip_rn(url));
+	//sprintf(url, "%s%s", GOPHER_ROOT, _strip_rn(url));
 
-	sprintf(fullpath, "%s%s", GOPHER_ROOT, url);
-
-	return fullpath;
-
-
-
-
+	//if (_last_char_of_url(url) == '/') {
+	if (_last_char_of_url(parsed_url) == '/') {
+		//_propend_gophermap(url);
+		_propend_gophermap(parsed_url);
+	}
+	
+	//return url;
+	//return parsed_url;
 }
 
 void _usage() {

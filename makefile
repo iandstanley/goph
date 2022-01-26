@@ -3,7 +3,7 @@ MANPAGE= docs/*.mdoc
 PRETTY= indent -cdb -ut
 BINS=a.out testsuite
 CC=clang $(CFLAGS)
-CFLAGS=-g -ferror-limit=1
+CFLAGS=-g -ferror-limit=1 -Wall
 LIBSRC=gopher.c error.c
 LIBOBJ=gopher.o error.o
 APPSRC=main.c 
@@ -19,7 +19,7 @@ a.out: 	library main.c
 
 ############################################################
 
-test:	testsuite
+test:	clean testsuite
 	./testsuite
 
 testsuite:	libgopher.a tests.o

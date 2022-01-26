@@ -8,14 +8,16 @@
 #include	"error.h"
 #include	"private.h"
 
-void _create_server_malloc_failed() {
-	syslog(LOG_CRIT, "CRITICAL: Failed to malloc memory for server. Aborting");
-	closelog();
-	abort();
-}
+/*
+ * void _create_server_malloc_failed() {
+ * 	syslog(LOG_CRIT, "CRITICAL: Failed to malloc memory for server. Aborting");
+ * 	closelog();
+ * 	abort();
+ * }
+ */
 
 void _getaddrinfo_failed() {
-	syslog(LOG_DEBUG, "GOPHERD getaddrinfo() failed. Aborting");
+	syslog(LOG_ERR, "GOPHERD getaddrinfo() failed. Aborting");
 	closelog();
 	abort();
 }
@@ -57,12 +59,15 @@ void _file_open_error(char * url) {
 
 void _open_syslog() {
 	#ifdef NDEBUG
+		perror("running with NDEBUG defined");
 		setlogmask(LOG_UPTO(LOG_NOTICE));
+		openlog("gopherd", LOG_PID | LOG_NDELAY, LOG_LOCAL0);
 	#else
+		perror("running with DEBUG defined");
 		setlogmask(LOG_UPTO(LOG_DEBUG));
+		openlog("gopherd", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL0);
 	#endif
 
-	openlog("gopherd", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL0);
 
 	syslog(LOG_NOTICE, "Gopherd program started by user %d", getuid() );
 }

@@ -13,7 +13,6 @@ void _open_syslog();
 void _close_syslog(); 
 void _usage();
 
-void _create_config();
 void _load_config(char * configfile);
 void _set_docroot(char * root);
 void _set_listening(char *ip);

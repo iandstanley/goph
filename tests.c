@@ -16,23 +16,10 @@
 #define 	RUNNING(X)	printf("Running %s\n", X);
 #define		TEST_PASS	printf("¬");
 
-
 extern Server server;
 
 
-/*
-void test_create_server() {
-	Server *s = create_server();
-
-	assert(s != NULL);
-
-	free(s);
-	TEST_PASS 
-}
-*/
-
 void test_set_server_settings() {
-/* 	Server * s = create_server(); */
 
 	_set_hostname("myhost");
 	assert(strcmp(server.hostname, "myhost") == 0);
@@ -51,30 +38,6 @@ void test_set_server_settings() {
 	TEST_PASS 
 
 }
-
-/*
-void test_configure_server() {
-	Server *s = create_server();
-	assert(s != NULL);
-
-	char args[9][13] = {"testsuite", "-n", "myhost", "-p", "7070", "-l", "127.0.0.1", "-r", "/tmp"};
-	char *p[9];
-	for (int i = 0; i < 9; i++) { p[i] = args[i]; }
-
- 	configure_server(s, 9, p); 
-	_load_config
-
-	assert(strncmp(s->hostname, "myhost", sizeof("myhost")) == 0);
-	TEST_PASS 
-	assert(strncmp(s->listening, "127.0.0.1", sizeof("127.0.0.1")) == 0);
-	TEST_PASS 
-	assert(strncmp(s->docroot, "/tmp", sizeof("/tmp")) == 0);
-	TEST_PASS 
-	assert(strcmp(s->port, "7070") == 0);
-	TEST_PASS 
-	free(s);
-}
-*/
 
 void test_closesyslog() {
 	_close_syslog();
@@ -156,15 +119,13 @@ void test_propend_gophermap() {
 
 
 void test_load_config() {
-
 	_load_config(CONFIG_FILE);
 
-	assert(strncmp(server.listening, "127.0.0.1", strlen("127.0.0.1")) == 0);
-	assert(strncmp(server.port, "7070", strlen("7070")) == 0);
+	assert(strncmp(server.listening, "0.0.0.0", strlen("0.0.0.0")) == 0);
+	assert(strncmp(server.port, "7777", strlen("7777")) == 0);
 	assert(strncmp(server.docroot, "/var/gopher", strlen("/var/gopher")) == 0);
 
 	TEST_PASS
-
 }
 
 /******************************************************/
@@ -172,9 +133,7 @@ void test_load_config() {
 int
 main()
 {
-/* 	test_create_server(); */
 	test_set_server_settings();
-/* 	test_configure_server(); */
 	test_syslog();
 	test_strip_rn();
 	test_parse_url();

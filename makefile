@@ -15,7 +15,11 @@ DEFAULT: test
 app:	a.out
 
 a.out: 	library main.c 
-	$(CC) main.c -DNDEBUG  -L. -lgopher
+	$(CC) main.c  -DDEBUG -L. -lgopher
+
+gopherd:	library main.c
+	$(CC) main.c -DNDEBUG -L. -lgopher
+	mv a.out gopherd
 
 ############################################################
 
@@ -59,7 +63,8 @@ clean:
 	-rm $(TESTBIN)
 	-rm $(BINS)
 	-rm a.out
-	-rm libgopher.a
+	-rm libgopher.a 
+	-rm gopherd
 	clear
 	@ls
 

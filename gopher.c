@@ -3,7 +3,7 @@
  * a gopher application to a few function calls.
  * 
  * All public interfaces to the server are contained in the header
- * file "gopher.h" and remaining routines in this file should be
+ * file "gopher.h" and remaining _functions in this file should be
  * avoided.
  * 
  */
@@ -27,89 +27,22 @@
 #include	"private.h"	
 #include	"error.h"	// all errors and logging functions
 
-#define		DEFAULT_PORT		"70"
 #define		CONNECTION_QUEUE	10000
 #define		BUFSIZE			4096
 
-#define		MAX_LINE	80
+
+
+/* TODO 	special handling for image files?? */
 
 Server server;
-
-/* 
-
-	TODO	split up into different functions
-	TODO 	structure struct server
-	TODO	make certain functions public
-	TODO	make other functions private
-	TODO 	add tests as we go 
-	TODO	move functionality into sub-functions that we can test in test.c
-
-*/
 
 		/********************************/
 		/* PUBLIC FUNCTIONS FOR LIBRARY */
 		/********************************/
 
-
-/*
-Server * create_server() {
+int start_server() {
 
 	_open_syslog();
-
-
-	Server *s = calloc(1,sizeof(Server));
-	assert(s != NULL);
-
-	if (s == NULL) {
-		_create_server_malloc_failed();
-	}
-
-	strcpy(s->hostname, "localhost");
-	strcpy(s->listening, "0.0.0.0");
-	strcpy(s->port, DEFAULT_PORT);
-	s->socket = -2;		// initialize to impossible RC code
-	strcpy(s->docroot, "/var/gopher");
-	return s;
-}
-*/
-
-
-
-/*
-void configure_server(Server *server, int argc, char ** argv) {
-
-	_load_config(CONFIG_FILE);
-	int sw;
-
-	while ((sw = getopt(argc, argv, "p:n:l:r:h") ) != -1) {
-		switch (sw) {
-		case 'p':
-			_set_port(server, optarg);	
-			break;
-		case 'n':
-			_set_hostname(server, optarg);
-			break;
-		case 'l':
-			_set_listening(server, optarg);
-			break;
-		case 'r':
-			_set_docroot(server, optarg);
-			break;
-		case 'h':
-			_usage();
-			exit(EXIT_SUCCESS);
-		default:
-			_usage();
-			exit(EXIT_FAILURE);
-		}
-	}
-}
-*/
-
-
-//int start_server(Server * server) {
-
-int start_server() {
 
 	_load_config(CONFIG_FILE);
 
@@ -181,23 +114,19 @@ int start_server() {
 	}
 }
 
-/*
-int stop_server(Server * server) {
-	return 0;
-}
-*/ 
 
 		/********************************/
 		/* PRIVATE FUNCTIONS IN LIBRARY */
 		/********************************/
 
-void _server_status() {
-	// should do something here??
-}
 
 #define		STATFAIL 	-1
 
 void _process_request(int client_socket, char * buf) {
+	assert(client_socket != 0);
+	assert(buf != NULL);
+	assert(strlen(buf) != 0 );
+
 	char * url = calloc(REQUEST_URL_SIZE+1, sizeof(char));
 
 	syslog(LOG_DEBUG, "_process_request() received %s", buf);
@@ -218,11 +147,17 @@ void _process_request(int client_socket, char * buf) {
 }
 
 char * _propend_gophermap(char * url) {
+	assert(url != NULL);
+	assert(strlen(url) > 0);
+
 	sprintf(url, "%sgophermap", url);
 	return url;
 }
 
 void _send_document(int client_socket, char * doc) {
+	assert(client_socket != 0);
+	assert(doc != NULL);
+	assert(strlen(doc) != 0 );
 
 	syslog(LOG_DEBUG, "Sending %s to client", doc);
 
@@ -257,6 +192,9 @@ void _send_document(int client_socket, char * doc) {
 }
 
 char * _strip_rn(char * url) {
+	assert(url != NULL);
+	assert(strlen(url)>0);
+
 	int len = strlen(url) -1;	// should point to '\n'
 
 	if (url[len] == '\n') { url[len--] = 0; }	// remove '\n'
@@ -266,46 +204,48 @@ char * _strip_rn(char * url) {
 }
 
 char _last_char(char * url) {
+	assert(url != NULL);
+	assert(strlen(url)>0);
+
 	return url[strlen(url)-1];
 }
 
 void  _parse_url(char * parsed_url, char * url) {
+	assert(strlen(url)>0);
+	assert(parsed_url != NULL);
+
 	sprintf(parsed_url, "%s%s", GOPHER_ROOT, _strip_rn(url));
 
 	if (_last_char(parsed_url) == '/') { _propend_gophermap(parsed_url); }
 }
 
-void _usage() {
-	fprintf(stderr, "Goph gopher server\n");
-	fprintf(stderr, "-h             help\n");
-	fprintf(stderr, "-n host        name of server\n");
-	fprintf(stderr, "-p port        alternate port to server on\n");
-	fprintf(stderr, "-l ipaddr      IP address to listen on\n");
-	fprintf(stderr, "-r dir         directory to use as root document store\n");
-	fprintf(stderr, "\n");
-}
-
 void _set_docroot(char *root ) {
+	assert(root != NULL);
 	assert(strcmp(root,"") != 0);
 
 	bzero(server.docroot, sizeof(server.docroot));
 	strcpy(server.docroot, root);
 }
 
-void _set_listening(char *ip) {
-	assert(strcmp(ip,"") != 0);
+void _set_listening(char *ip) { 	// can be "" as this is an override 
+	assert(ip != NULL);
+	assert(strlen(ip) < 16);
 
 	bzero(server.listening, sizeof(server.listening));
 	strcpy(server.listening, ip);
 }
 
 void _set_port(char * p) {
-	assert(p != 0);
+	assert(p != NULL);
+	assert(atoi(p) > 0);
+	assert(atoi(p) <= 65535);
 
+	bzero(server.port, sizeof(server.port));
 	strcpy(server.port, p);
 }
 
 void _set_hostname(char *newhost ) {
+	assert(newhost != NULL);
 	assert(strcmp(newhost,"") != 0);
 
 	bzero(server.hostname, sizeof(server.hostname));
@@ -313,20 +253,42 @@ void _set_hostname(char *newhost ) {
 }
 
 
+void _write_default_config() {
+	FILE * newfp = fopen(CONFIG_FILE, "w");
+
+	fprintf(newfp, "# /etc/gopherd.conf\n");
+	fprintf(newfp, "# This is the configuration file for the gopherd server.\n");
+	fprintf(newfp, "# \n");
+	fprintf(newfp, "# listening=0.0.0.0\n");
+	fprintf(newfp, "# port=70\n");
+	fprintf(newfp, "# root=/var/gopher\n");
+
+	fclose(newfp);
+}
 
 
-
-
-
+#define		MAX_LINE	80
 
 void _load_config(char * configfile) {
+	assert(configfile != NULL);
+	assert(strcmp(configfile,"") != 0 );
+
 	char line[MAX_LINE+1];
 	char *sep="=\n";
 	char *token, *value;
 
-	FILE * fd = fopen(CONFIG_FILE, "r");
+	FILE * fp = fopen(CONFIG_FILE, "r");
 
-	while ( fgets(line, 80, fd) != NULL ) {
+	if ( fp == NULL ) {
+		_write_default_config();
+
+		_set_listening("0.0.0.0");
+		_set_port(DEFAULT_PORT);
+		_set_docroot(GOPHER_ROOT);
+		return;
+	}
+
+	while ( fgets(line, 80, fp) != NULL ) {
 
 		if (line[0] == '#') {
 			continue;
@@ -336,37 +298,19 @@ void _load_config(char * configfile) {
 		value = strtok(NULL, sep);
 
 		if (strcmp(token, "listening") == 0) {
-			strcpy(server.listening, value);
-			continue;
+			_set_listening(value); continue;
 		}
 
 		if (strcmp(token, "port") == 0) {
-			strcpy(server.port, value);
-			continue;
+			_set_port(value); continue;
 		}
 
 		if (strcmp(token, "root") == 0) {
-			strcpy(server.docroot, value);
-			continue;
+			_set_docroot(value); continue;
 		}
-
 	}
 
-	fclose(fd);
-}
-
-void _create_config() {
-
-	FILE * fd = fopen(CONFIG_FILE, "w");
-
-	fprintf(fd, "# /etc/gopherd.conf\n");
-	fprintf(fd, "# This is the configuration file for the gopherd server.\n");
-	fprintf(fd, "# \n");
-	fprintf(fd, "# listening=0.0.0.0\n");
-	fprintf(fd, "# port=70\n");
-	fprintf(fd, "# root=/var/gopherd/\n");
-
-	fclose(fd);
+	fclose(fp);
 }
 
 

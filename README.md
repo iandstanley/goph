@@ -8,7 +8,7 @@ Being written on FreeBSD I am using the default clang compiler. Building on Linu
 
 ## Binaries created 
 
-Make creates the folowing binary: 'gopherd'
+Make creates the following binary: 'gopherd'
 
 ## Other functions
 

@@ -9,6 +9,7 @@ LIBOBJ=gopher.o error.o
 APPSRC=main.c 
 TESTSRC=test.c 
 TESTBIN=test_suite
+GOPHERDIR=/var/gopher/
 
 DEFAULT: test
 
@@ -76,3 +77,11 @@ pretty:	$(ALLSRC)
 
 man:	$(MANPAGE)
 	mandoc docs/gopherd.mdoc | pg
+
+installconfig:
+	sudo cp files/gopherd.conf /etc/
+
+installsample:
+	-sudo mkdir $(GOPHERDIR)
+	-sudo chown $(USER):$(USER) $(GOPHERDIR)
+	cp files/gophermap $(GOPHERDIR)

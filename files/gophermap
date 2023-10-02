@@ -1,0 +1,71 @@
+GOPHER
+======
+
+Typically found in /ver/gopher
+
+eg.
+
+	/var/gopher
+		|
+		+-- gophermap
+		|
+		+-- videos/
+		|
+		+-- mp3/
+		|
+		+-- folder/
+			|
+			+-- gophermap
+			|
+			+-- readme.txt
+
+
+TERMS
+
+gophermap       gopher index to files in a directory or other
+		gophermaps 
+
+phlog           phlog is short for gopherlog (aka a blog
+		in gopherspace)
+
+
+EDITING GOPHERMAPS IN VIM
+
+$ vim gophermap
+
+	:set expandtab!
+
+
+GOPHER CANONICAL TYPES
+
+	0	text file
+	1	gopher submenu
+	2	CCSO nameserver
+	3 	error code from server
+	4	binhex file
+	5	DOS file
+	6	uuencoded file
+	7 	gopher full text search
+	8 	telnet
+	9 	binary file
+	+	mirror alt server
+	g	GIF image
+	I	image file
+	h	HTML file url
+	s	sound file (eg WAV)
+	i 	information page
+	T 	telnet 3270
+
+
+eg.
+
+
+?Name			Link			Server			Port
+hYoutube Channel	URL:http://youtube.com/ 
+1Gopherpedia		/			gopherpedia.com		70
+1MyVideoArchive		videos/			distro.tube		70
+1Veronica2 Search	gopher://gopher.floodgap.com	70/7/v2/vs
+1TheGopherProject	/software/Gopher	gopher.quux.org		70
+1XPenguin		/			gopher.xpenguin.club	70
+
+
